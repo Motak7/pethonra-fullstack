@@ -18,7 +18,9 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 // Função para buscar todos os pets
 export const fetchPets = async (): Promise<Pet[]> => {
   if (!API_BASE_URL) {
-    throw new Error("A variável de ambiente NEXT_PUBLIC_API_URL não está definida.");
+    throw new Error(
+      'A variável de ambiente NEXT_PUBLIC_API_URL não está definida.'
+    );
   }
 
   try {
@@ -29,20 +31,22 @@ export const fetchPets = async (): Promise<Pet[]> => {
     if (!response.ok) {
       // Se não foi ok, tenta pegar a mensagem de erro do corpo, senão usa o statusText
       const errorData = await response.json().catch(() => ({})); // Tenta parsear erro JSON
-      throw new Error(errorData.message || `Erro na API: ${response.statusText} (Status: ${response.status})`);
+      throw new Error(
+        errorData.message ||
+          `Erro na API: ${response.statusText} (Status: ${response.status})`
+      );
     }
 
     // Parseia a resposta JSON e retorna os dados tipados como Pet[]
     const pets: Pet[] = await response.json();
     return pets;
-
   } catch (error) {
-    console.error("Falha ao buscar pets:", error);
+    console.error('Falha ao buscar pets:', error);
     // Re-lança o erro para que o componente que chamou possa tratá-lo
     if (error instanceof Error) {
-        throw error;
+      throw error;
     }
-    throw new Error("Ocorreu um erro desconhecido ao buscar dados da API.");
+    throw new Error('Ocorreu um erro desconhecido ao buscar dados da API.');
   }
 };
 

@@ -11,9 +11,11 @@ export const listPets = async (req: Request, res: Response) => {
   } catch (error) {
     // Se o serviço lançar um erro, captura e envia uma resposta de erro
     if (error instanceof Error) {
-      res.status(500).json({ message: "Erro ao buscar pets.", error: error.message });
+      res
+        .status(500)
+        .json({ message: 'Erro ao buscar pets.', error: error.message });
     } else {
-      res.status(500).json({ message: "Erro desconhecido ao buscar pets." });
+      res.status(500).json({ message: 'Erro desconhecido ao buscar pets.' });
     }
   }
 };

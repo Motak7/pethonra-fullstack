@@ -24,7 +24,7 @@ export default function HomePage() {
         if (err instanceof Error) {
           setError(err.message);
         } else {
-          setError("Ocorreu um erro desconhecido.");
+          setError('Ocorreu um erro desconhecido.');
         }
       } finally {
         setIsLoading(false); // Finaliza o carregamento, independentemente de sucesso ou erro
@@ -37,11 +37,17 @@ export default function HomePage() {
   // Renderização condicional baseada nos estados
   return (
     <main className="container mx-auto p-4 pt-10">
-      <h1 className="text-3xl font-bold text-center mb-6">Lista de Pets - PetHonra</h1>
+      <h1 className="mb-6 text-center text-3xl font-bold">
+        Lista de Pets - PetHonra
+      </h1>
 
-      {isLoading && <p className="text-center text-gray-500">Carregando pets...</p>}
+      {isLoading && (
+        <p className="text-center text-gray-500">Carregando pets...</p>
+      )}
 
-      {error && <p className="text-center text-red-500">Erro ao carregar: {error}</p>}
+      {error && (
+        <p className="text-center text-red-500">Erro ao carregar: {error}</p>
+      )}
 
       {!isLoading && !error && (
         <div>
@@ -50,11 +56,20 @@ export default function HomePage() {
           ) : (
             <ul className="space-y-4">
               {pets.map((pet) => (
-                <li key={pet.id} className="bg-white p-4 rounded shadow hover:shadow-lg transition-shadow">
+                <li
+                  key={pet.id}
+                  className="rounded bg-white p-4 shadow transition-shadow hover:shadow-lg"
+                >
                   <h2 className="text-xl font-semibold">{pet.name}</h2>
                   <p className="text-gray-700">Espécie: {pet.species}</p>
-                  {pet.breed && <p className="text-gray-600">Raça: {pet.breed}</p>}
-                  {pet.birthDate && <p className="text-gray-500 text-sm">Nascimento: {new Date(pet.birthDate).toLocaleDateString()}</p>}
+                  {pet.breed && (
+                    <p className="text-gray-600">Raça: {pet.breed}</p>
+                  )}
+                  {pet.birthDate && (
+                    <p className="text-sm text-gray-500">
+                      Nascimento: {new Date(pet.birthDate).toLocaleDateString()}
+                    </p>
+                  )}
                 </li>
               ))}
             </ul>

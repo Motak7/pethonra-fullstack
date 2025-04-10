@@ -9,9 +9,9 @@ import { PrismaClient } from '../generated/prisma'; // Ajuste o caminho se neces
 
 // Cria uma única instância do PrismaClient
 const prisma = new PrismaClient({
-    // Você pode adicionar opções de configuração aqui se necessário,
-    // como logs:
-    // log: ['query', 'info', 'warn', 'error'],
+  // Você pode adicionar opções de configuração aqui se necessário,
+  // como logs:
+  // log: ['query', 'info', 'warn', 'error'],
 });
 
 // Exporta a instância para ser usada em outras partes da aplicação

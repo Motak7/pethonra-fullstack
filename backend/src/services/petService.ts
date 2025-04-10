@@ -12,7 +12,7 @@ export const findAllPets = async () => {
     return pets;
   } catch (error) {
     // Em uma aplicação real, trate o erro de forma mais robusta (log, etc.)
-    console.error("Erro ao buscar pets:", error);
+    console.error('Erro ao buscar pets:', error);
     throw new Error('Não foi possível buscar os pets no banco de dados.');
   }
 };
