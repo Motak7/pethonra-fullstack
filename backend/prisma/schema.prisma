@@ -1,0 +1,39 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// --- Modelos da Aplicação ---
+
+model Pet {
+  id        String   @id @default(cuid()) // Chave primária única (gerada automaticamente)
+  name      String                      // Nome do pet
+  species   String                      // Espécie (ex: "Cachorro", "Gato")
+  breed     String?                     // Raça (O '?' torna o campo opcional)
+  birthDate DateTime?                   // Data de nascimento (opcional)
+  // ownerId   String?                   // Campo para relacionar com um Dono/Usuário (adicionaremos depois)
+
+  createdAt DateTime @default(now())     // Data/Hora de criação do registro
+  updatedAt DateTime @updatedAt         // Data/Hora da última atualização do registro
+
+  // @@index([ownerId]) // Exemplo de índice para futuras relações
+}
+
+// Você pode adicionar outros modelos aqui depois, como 'User', 'Appointment', etc.
+// model User {
+//   id    String @id @default(cuid())
+//   email String @unique
+//   name  String?
+//   pets  Pet[] // Relação um-para-muitos com Pet
+// }

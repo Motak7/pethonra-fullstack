@@ -1,0 +1,12 @@
+# Dependências do Node.js
+node_modules/
+
+# Arquivos de ambiente (contêm segredos, não devem ir para o Git)
+.env*
+
+# Pastas de build/distribuição comuns
+dist/
+build/
+
+# Arquivo de metadados do macOS Finder
+.DS_Store
