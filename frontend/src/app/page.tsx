@@ -1,78 +1,106 @@
 // frontend/src/app/page.tsx
-'use client'; // Necessário no App Router para usar hooks como useState/useEffect
+'use client';
 
 import React, { useState, useEffect } from 'react';
-import { fetchPets, Pet } from '../services/api'; // Importa a função e o tipo do nosso serviço
+// 👇 Adicionar import do ProductForm e tipos/funções necessárias
+import { fetchProducts, addProduct, Product, ProductCreateData } from '../services/api';
+import ProductCard from '../components/ProductCard';
+import ProductForm from '../components/ProductForm'; // <--- Importar o formulário
 
 export default function HomePage() {
-  // Estados para armazenar os pets, status de carregamento e erros
-  const [pets, setPets] = useState<Pet[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  // useEffect para buscar os dados quando o componente montar
+  // 👇 Estados para controlar o formulário de adição
+  const [showAddForm, setShowAddForm] = useState<boolean>(false);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+
+  // Função para carregar produtos (mantida)
+  const loadProducts = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const data = await fetchProducts();
+      setProducts(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erro desconhecido ao buscar produtos.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // useEffect para carregar produtos na montagem (mantido)
   useEffect(() => {
-    // Define uma função async dentro do useEffect para poder usar await
-    const loadPets = async () => {
-      setIsLoading(true); // Inicia o carregamento
-      setError(null); // Limpa erros anteriores
-      try {
-        const data = await fetchPets(); // Chama a função do serviço api.ts
-        setPets(data); // Armazena os dados no estado
-      } catch (err) {
-        // Se ocorrer um erro na chamada da API, armazena a mensagem de erro
-        if (err instanceof Error) {
-          setError(err.message);
-        } else {
-          setError('Ocorreu um erro desconhecido.');
-        }
-      } finally {
-        setIsLoading(false); // Finaliza o carregamento, independentemente de sucesso ou erro
-      }
-    };
+    loadProducts();
+  }, []);
 
-    loadPets(); // Executa a função de carregamento
-  }, []); // O array vazio [] garante que o useEffect rode apenas uma vez na montagem
+  // 👇 Função para lidar com a submissão do formulário de ADIÇÃO
+  const handleAddProduct = async (formData: ProductCreateData) => {
+    setIsSubmitting(true);
+    setSubmitError(null);
+    try {
+      // Não precisamos do tipo ProductUpdateData aqui, garantimos que é ProductCreateData
+      await addProduct(formData as ProductCreateData);
+      setShowAddForm(false); // Fecha o formulário
+      await loadProducts(); // Recarrega a lista de produtos
+      // Poderia adicionar o novo produto localmente para otimizar:
+      // setProducts(prev => [newProduct, ...prev]);
+    } catch (err) {
+       setSubmitError(err instanceof Error ? err.message : "Erro ao adicionar produto.");
+       // Não fecha o formulário em caso de erro para o usuário ver
+    } finally {
+        setIsSubmitting(false);
+    }
+  };
 
-  // Renderização condicional baseada nos estados
+
   return (
     <main className="container mx-auto p-4 pt-10">
-      <h1 className="mb-6 text-center text-3xl font-bold">
-        Lista de Pets - PetHonra
-      </h1>
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold text-center">Nossos Produtos - PetHonra</h1>
+        {/* 👇 Botão para mostrar o formulário de adição */}
+        <button
+          onClick={() => setShowAddForm(true)}
+          className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors"
+        >
+          Adicionar Produto
+        </button>
+      </div>
 
-      {isLoading && (
-        <p className="text-center text-gray-500">Carregando pets...</p>
+      {/* 👇 Renderização condicional do Formulário de Adição */}
+      {showAddForm && (
+         <div className="mb-8 p-4 border rounded-lg bg-gray-50">
+            {/* Passa a função de submit e a de cancelar */}
+            <ProductForm
+                onSubmit={handleAddProduct}
+                isLoading={isSubmitting}
+                onCancel={() => {
+                    setShowAddForm(false);
+                    setSubmitError(null); // Limpa erro ao cancelar
+                }}
+            />
+             {/* Exibe erro de submissão, se houver */}
+            {submitError && <p className="text-red-500 mt-2 text-sm">{submitError}</p>}
+         </div>
       )}
 
-      {error && (
-        <p className="text-center text-red-500">Erro ao carregar: {error}</p>
-      )}
 
+      {/* Seção da Lista de Produtos (mantida como antes, com as adições) */}
+      {isLoading && <p className="text-center text-gray-500">Carregando produtos...</p>}
+      {error && <p className="text-center text-red-500">Erro ao carregar: {error}</p>}
       {!isLoading && !error && (
         <div>
-          {pets.length === 0 ? (
-            <p className="text-center text-gray-600">Nenhum pet encontrado.</p>
+          {products.length === 0 ? (
+            <p className="text-center text-gray-600">Nenhum produto encontrado.</p>
           ) : (
-            <ul className="space-y-4">
-              {pets.map((pet) => (
-                <li
-                  key={pet.id}
-                  className="rounded bg-white p-4 shadow transition-shadow hover:shadow-lg"
-                >
-                  <h2 className="text-xl font-semibold">{pet.name}</h2>
-                  <p className="text-gray-700">Espécie: {pet.species}</p>
-                  {pet.breed && (
-                    <p className="text-gray-600">Raça: {pet.breed}</p>
-                  )}
-                  {pet.birthDate && (
-                    <p className="text-sm text-gray-500">
-                      Nascimento: {new Date(pet.birthDate).toLocaleDateString()}
-                    </p>
-                  )}
-                </li>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {products.map((product) => (
+                <ProductCard key={product.id} product={product} />
+                // Adicionar botões Editar/Deletar ao ProductCard ou aqui depois
               ))}
-            </ul>
+            </div>
           )}
         </div>
       )}
