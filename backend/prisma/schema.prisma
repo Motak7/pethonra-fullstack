@@ -1,39 +1,36 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// backend/prisma/schema.prisma
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
-generator client {
-  provider = "prisma-client-js"
-  output   = "../src/generated/prisma"
-}
-
+// Bloco datasource db (manter como está)
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-// --- Modelos da Aplicação ---
-
-model Pet {
-  id        String   @id @default(cuid()) // Chave primária única (gerada automaticamente)
-  name      String                      // Nome do pet
-  species   String                      // Espécie (ex: "Cachorro", "Gato")
-  breed     String?                     // Raça (O '?' torna o campo opcional)
-  birthDate DateTime?                   // Data de nascimento (opcional)
-  // ownerId   String?                   // Campo para relacionar com um Dono/Usuário (adicionaremos depois)
-
-  createdAt DateTime @default(now())     // Data/Hora de criação do registro
-  updatedAt DateTime @updatedAt         // Data/Hora da última atualização do registro
-
-  // @@index([ownerId]) // Exemplo de índice para futuras relações
+// Bloco generator client (manter como está, com seu output)
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma" // Mantém seu caminho customizado
 }
 
-// Você pode adicionar outros modelos aqui depois, como 'User', 'Appointment', etc.
-// model User {
-//   id    String @id @default(cuid())
-//   email String @unique
-//   name  String?
-//   pets  Pet[] // Relação um-para-muitos com Pet
-// }
+// --- Modelos da Aplicação ---
+
+model Product {
+  id          String    @id @default(cuid()) // ID único do produto
+  name        String    // Nome do produto (ex: "Ração Premium Cães Adultos")
+  description String    @db.Text // Descrição longa (usando tipo TEXT do DB)
+  price       Float     // Preço do produto (use Float ou Decimal)
+  // Se usar Decimal para maior precisão de dinheiro:
+  // price       Decimal   @db.Decimal(10, 2) // Ex: 10 dígitos no total, 2 decimais
+  sku         String    @unique // Código SKU único do produto
+  stock       Int       @default(0) // Quantidade em estoque
+  imageUrl    String?   // URL da imagem principal (opcional)
+  // category    String?   // Categoria do produto (opcional, ou pode ser uma relação)
+  // tags        String[]  // Exemplo de campo array (se o DB suportar)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Adicionar relações depois, se necessário (ex: com Categoria, Pedidos)
+}
+
+// O modelo Pet foi removido. Se precisar dele depois, pode adicionar novamente.

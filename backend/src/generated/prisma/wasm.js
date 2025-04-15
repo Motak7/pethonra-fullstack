@@ -117,12 +117,14 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   Serializable: 'Serializable'
 });
 
-exports.Prisma.PetScalarFieldEnum = {
+exports.Prisma.ProductScalarFieldEnum = {
   id: 'id',
   name: 'name',
-  species: 'species',
-  breed: 'breed',
-  birthDate: 'birthDate',
+  description: 'description',
+  price: 'price',
+  sku: 'sku',
+  stock: 'stock',
+  imageUrl: 'imageUrl',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -144,7 +146,7 @@ exports.Prisma.NullsOrder = {
 
 
 exports.Prisma.ModelName = {
-  Pet: 'Pet'
+  Product: 'Product'
 };
 
 /**
